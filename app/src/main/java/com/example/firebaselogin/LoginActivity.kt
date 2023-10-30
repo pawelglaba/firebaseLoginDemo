@@ -32,7 +32,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     }
 
-
     override fun onClick(view: View?) {
         if(view !=null){
             when (view.id){
@@ -44,8 +43,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
-
-
 
 
     private fun validateLoginDetails(): Boolean {

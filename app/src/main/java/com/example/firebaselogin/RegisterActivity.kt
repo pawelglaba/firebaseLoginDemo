@@ -7,6 +7,9 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import com.example.firebaselogin.firestore.FirestoreClass
+import com.example.firebaselogin.firestore.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -86,21 +89,33 @@ class RegisterActivity : BaseActivity() {
         if (validateRegisterDetails()){
             val login: String = inputEmail?.text.toString().trim() {it <= ' '}
             val password: String = inputPassword?.text.toString().trim() {it <= ' '}
+            val name: String = inputName?.text.toString().trim() {it <= ' '}
+
+
 
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(login,password).addOnCompleteListener(
                 OnCompleteListener <AuthResult>{ task ->
-                    if(task.isSuccessful){
+
+                   // if(task.isSuccessful){
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         showErrorSnackBar("You are registered successfully. Your user id is ${firebaseUser.uid}",false)
+
+                    val user = User("Testowe ID",
+                        name,
+                        true,
+                        login,
+                    )
+                    FirestoreClass().registerUserFS(this@RegisterActivity, user)
+
 
 
                         FirebaseAuth.getInstance().signOut()
                         finish()
 
 
-                    } else{
+                  //  } else{
                         showErrorSnackBar(task.exception!!.message.toString(),true)
-                    }
+                  //  }
 
                 }
             )
@@ -108,6 +123,11 @@ class RegisterActivity : BaseActivity() {
         }
     }
 
+     fun  userRegistrationSuccess(){
+
+         Toast.makeText(this@RegisterActivity, resources.getString(R.string.register_success),
+         Toast.LENGTH_LONG).show()
+     }
 
 
 
