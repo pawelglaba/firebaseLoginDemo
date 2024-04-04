@@ -2,33 +2,34 @@ package com.example.firebaselogin
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
-import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 
 open class BaseActivity : AppCompatActivity() {
 
-
-    fun showErrorSnackBar(message: String, errorMessage: Boolean){
-        val snackbar =
-            Snackbar.make(findViewById(android.R.id.content),message,Snackbar.LENGTH_LONG)
+    // Metoda do wyświetlania komunikatów Snackbar
+    fun showErrorSnackBar(message: String, errorMessage: Boolean) {
+        // Tworzenie Snackbar z przekazaną wiadomością
+        val snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
         val snackbarView = snackbar.view
 
+        // Ustawienie koloru tła Snackbar w zależności od rodzaju komunikatu
         if (errorMessage) {
             snackbarView.setBackgroundColor(
-                ContextCompat.getColor(this@BaseActivity,
+                ContextCompat.getColor(
+                    this@BaseActivity,
                     R.color.colorSnackBarError
                 )
             )
-        }else{
+        } else {
             snackbarView.setBackgroundColor(
-                ContextCompat.getColor(this@BaseActivity,
+                ContextCompat.getColor(
+                    this@BaseActivity,
                     R.color.colorSnackBarSuccess
                 )
             )
         }
+        // Wyświetlenie Snackbar
         snackbar.show()
     }
-
-
 }
