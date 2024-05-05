@@ -15,6 +15,9 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
+/**
+ * Aktywność rejestracji użytkownika.
+ */
 class RegisterActivity : BaseActivity() {
 
     private var registerButton: Button? = null
@@ -27,22 +30,23 @@ class RegisterActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Inicjalizacja pól wejściowych i przycisku rejestracji
         registerButton = findViewById(R.id.registerButton)
         inputEmail = findViewById(R.id.inputLEmaill)
         inputName = findViewById(R.id.inputName)
         inputPassword = findViewById(R.id.inputPassword2)
         inputRepPass = findViewById(R.id.inputPassword2repeat)
 
+        // Ustawienie nasłuchiwania kliknięć przycisku rejestracji
         registerButton?.setOnClickListener{
-            //validateRegisterDetails()
             registerUser()
-
         }
-
     }
 
-
-
+    /**
+     * Metoda walidująca wprowadzone dane rejestracji.
+     * @return True, jeśli dane są poprawne, w przeciwnym razie False.
+     */
     private fun validateRegisterDetails(): Boolean {
 
         return when{
@@ -54,81 +58,68 @@ class RegisterActivity : BaseActivity() {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_name),true)
                 false
             }
-
             TextUtils.isEmpty(inputPassword?.text.toString().trim{ it <= ' '}) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_password),true)
                 false
             }
-
             TextUtils.isEmpty(inputRepPass?.text.toString().trim{ it <= ' '}) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_reppassword),true)
                 false
             }
-
             inputPassword?.text.toString().trim {it <= ' '} != inputRepPass?.text.toString().trim{it <= ' '} -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_password_mismatch),true)
                 false
             }
-
-
-            else -> {
-                //showErrorSnackBar("Your details are valid",false)
-                true
-            }
+            else -> true
         }
-
-
     }
 
+    /**
+     * Metoda przechodzenia do aktywności logowania.
+     */
     fun goToLogin(view: View) {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish()
+        finish() // finish(), po to aby użytkownik nie mógł już wrócić do aktualnej aktywności bez restartowania aplikacji
     }
+
+    /**
+     * Metoda rejestracji użytkownika za pomocą Firebase Authentication.
+     */
     private fun registerUser(){
         if (validateRegisterDetails()){
             val login: String = inputEmail?.text.toString().trim() {it <= ' '}
             val password: String = inputPassword?.text.toString().trim() {it <= ' '}
             val name: String = inputName?.text.toString().trim() {it <= ' '}
 
-
-
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(login,password).addOnCompleteListener(
                 OnCompleteListener <AuthResult>{ task ->
-
-                   // if(task.isSuccessful){
+                    if(task.isSuccessful){
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         showErrorSnackBar("You are registered successfully. Your user id is ${firebaseUser.uid}",false)
 
-                    val user = User("Testowe ID",
-                        name,
-                        true,
-                        login,
-                    )
-                    FirestoreClass().registerUserFS(this@RegisterActivity, user)
-
-
+                        val user = User("Testowe ID",
+                            name,
+                            true,
+                            login,
+                        )
+                        FirestoreClass().registerUserFS(this@RegisterActivity, user)
 
                         FirebaseAuth.getInstance().signOut()
                         finish()
 
-
-                  //  } else{
+                    } else{
                         showErrorSnackBar(task.exception!!.message.toString(),true)
-                  //  }
-
+                    }
                 }
             )
-
         }
     }
 
-     fun  userRegistrationSuccess(){
-
-         Toast.makeText(this@RegisterActivity, resources.getString(R.string.register_success),
-         Toast.LENGTH_LONG).show()
-     }
-
-
-
+    /**
+     * Metoda wywoływana po udanej rejestracji użytkownika wyświetlająca wiadomość Toast.
+     */
+    fun  userRegistrationSuccess(){
+        Toast.makeText(this@RegisterActivity, resources.getString(R.string.register_success), Toast.LENGTH_LONG).show()
+    }
 }
