@@ -37,7 +37,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         if(view !=null){
             when (view.id){
 
-                R.id.textView4 ->{
+                R.id.registerTextViewClickable ->{
                     // Przejście do ekranu rejestracji po kliknięciu linku
                     val intent = Intent(this, RegisterActivity::class.java)
                     startActivity(intent)
